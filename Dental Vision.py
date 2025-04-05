@@ -227,25 +227,26 @@ def image_processing(input_image):
 
 
 def predict(resized_image):
-    image = "None"
+  
     model = keras.models.load_model('teethsegmentation_34.hdf5', compile=False)
-    if len(resized_image.shape) == 2:
-        image = np.expand_dims(resized_image, axis=-1)  # Convert shape to (256, 256, 1)
 
-    # If the image is grayscale but the model expects RGB (shape: (256, 256, 1) -> (256, 256, 3)), convert it
-    if resized_image.shape[-1] == 1:
-        image = np.repeat(resized_image, 3, axis=-1)  # Repeat the grayscale channel to make it RGB
+    def predict(resized_image):
+    # Check if the image is grayscale and convert if necessary
+    if len(resized_image.shape) == 2:  # Grayscale image (256, 256)
+        resized_image = np.expand_dims(resized_image, axis=-1)  # Convert shape to (256, 256, 1)
 
-   
-    # Resize and reshape the image to match the input shape (256, 256, 1)
-    # resized_image = cv2.resize(image_1, (256, 256))
-    mask = image
-    # mask = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
-    #normalized_image = mask / 255.0
-    normalized_image = mask.astype('float32') / 255.0  # Example normalization
+    # If the image is grayscale but the model expects RGB, convert it to RGB (256, 256, 3)
+    if resized_image.shape[-1] == 1:  # Single channel (grayscale)
+        resized_image = np.repeat(resized_image, 3, axis=-1)  # Repeat to make it RGB (256, 256, 3)
+
+    # Normalize the image
+    normalized_image = resized_image.astype('float32') / 255.0  # Normalize to [0, 1]
+
+    # Expand dimensions to match the model's input shape (batch size, height, width, channels)
+    input_image = np.expand_dims(normalized_image, axis=0)  # Shape becomes (1, 256, 256, 3) or (1, 256, 256, 1)
 
     # Make the prediction
-    pred_mask = model.predict(np.expand_dims(normalized_image, axis=0))
+    pred_mask = model.predict(input_image)
 
   
 
