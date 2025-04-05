@@ -118,7 +118,7 @@ def vit_based(input_image):
 def image_processing(input_image):
     print(input_image.shape)
     resized_image = cv2.resize(input_image, (256, 256))
-    # gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
+    gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
 
     blurred = cv2.GaussianBlur(resized_image, (5,5), 0)
     equalized = cv2.equalizeHist(blurred)
