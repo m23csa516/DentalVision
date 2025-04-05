@@ -258,7 +258,8 @@ def predict(resized_image):
     binary_mask = (pred_mask_image > 0.5).astype(np.uint8)
 
     print("binaryimage",binary_mask.shape)
-    prediction_image = binary_mask.reshape(resized_image.shape)
+    prediction_image = binary_mask
+    # binary_mask.reshape(resized_image.shape)
     #print("PI:", prediction_image.shape)
     prediction_image_8 = (prediction_image * 255).astype(np.uint8)
     print(prediction_image_8.shape)
