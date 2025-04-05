@@ -227,7 +227,8 @@ def image_processing(input_image):
 
 
 def predict(resized_image):
-  
+
+    # Load the model only once at the start, outside the predict function
     model = keras.models.load_model('teethsegmentation_34.hdf5', compile=False)
 
     # Check if the image is grayscale and convert if necessary
@@ -235,22 +236,37 @@ def predict(resized_image):
         resized_image = np.expand_dims(resized_image, axis=-1)  # Convert shape to (256, 256, 1)
 
     # If the image is grayscale but the model expects RGB, convert it to RGB (256, 256, 3)
-    if resized_image.shape[-1] == 1:  # Single channel (grayscale)
+    elif resized_image.shape[-1] == 1:  # Single channel (grayscale)
         resized_image = np.repeat(resized_image, 3, axis=-1)  # Repeat to make it RGB (256, 256, 3)
 
     # Normalize the image
     normalized_image = resized_image.astype('float32') / 255.0  # Normalize to [0, 1]
 
     # Expand dimensions to match the model's input shape (batch size, height, width, channels)
-    input_image = np.expand_dims(normalized_image, axis=0)  # Shape becomes (1, 256, 256, 3) or (1, 256, 256, 1)
+    input_image = np.expand_dims(normalized_image, axis=0)  # Shape becomes (1, 256, 256, 1) or (1, 256, 256, 3)
+
+    # Ensure that the model expects the correct number of channels (1 or 3)
+    if input_image.shape[-1] == 1:
+        input_image = np.expand_dims(input_image, axis=-1)  # Keep it grayscale (1 channel)
+    elif input_image.shape[-1] == 3:
+        input_image = np.expand_dims(input_image, axis=-1)  # Model might expect RGB
 
     # Make the prediction
     pred_mask = model.predict(input_image)
 
+    # Convert the probabilities to a binary mask using a threshold (e.g., 0.5)
+    binary_mask = (pred_mask > 0.5).astype(np.uint8)
+
+    # Convert the predicted binary mask back to a format suitable for display
+    pred_mask_image = cv2.cvtColor(binary_mask[0], cv2.COLOR_GRAY2RGB)  # Convert to RGB for display
+
+    
+
+
   
 
     # Convert the probabilities to a binary mask using a threshold (e.g., 0.5)
-    binary_mask = (pred_mask > 0.5).astype(np.uint8)
+    # binary_mask = (pred_mask > 0.5).astype(np.uint8)
 
     print(binary_mask.shape)
     prediction_image = binary_mask.reshape(mask.shape)
