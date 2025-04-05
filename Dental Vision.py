@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Aug 24 10:19:28 2023
 
-@author: Purvesh
-"""
 import io
 import streamlit as st
 from PIL import Image
@@ -117,10 +112,16 @@ def vit_based(input_image):
 
 def image_processing(input_image):
     print(input_image.shape)
-    resized_image = cv2.resize(input_image, (256, 256))
-    gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
+    if len(input_image.shape) == 3 and input_image.shape[2] == 3:
+    # If the image has 3 channels (BGR), convert it to grayscale
+        gray_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
+    else:
+    # If the image is already grayscale (1 channel), use it as is
+        gray_image = input_image
+    resized_image = cv2.resize(gray_image, (256, 256))
+    
 
-    blurred = cv2.GaussianBlur(gray_image, (5,5), 0)
+    blurred = cv2.GaussianBlur(resized_image, (5,5), 0)
     equalized = cv2.equalizeHist(blurred)
 
     # 3. Global Threshold (Otsu's)
