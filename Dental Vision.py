@@ -120,7 +120,7 @@ def image_processing(input_image):
     resized_image = cv2.resize(input_image, (256, 256))
     gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
 
-    blurred = cv2.GaussianBlur(resized_image, (5,5), 0)
+    blurred = cv2.GaussianBlur(gray_image, (5,5), 0)
     equalized = cv2.equalizeHist(blurred)
 
     # 3. Global Threshold (Otsu's)
