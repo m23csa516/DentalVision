@@ -227,11 +227,19 @@ def image_processing(input_image):
 
 
 def predict(resized_image):
+    image = "None"
     model = keras.models.load_model('teethsegmentation_34.hdf5', compile=False)
+    if len(resized_image.shape) == 2:
+        image = np.expand_dims(resized_image, axis=-1)  # Convert shape to (256, 256, 1)
+
+    # If the image is grayscale but the model expects RGB (shape: (256, 256, 1) -> (256, 256, 3)), convert it
+    if resized_image.shape[-1] == 1:
+        image = np.repeat(resized_image, 3, axis=-1)  # Repeat the grayscale channel to make it RGB
+
    
     # Resize and reshape the image to match the input shape (256, 256, 1)
     # resized_image = cv2.resize(image_1, (256, 256))
-    mask = resized_image
+    mask = image
     # mask = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
     normalized_image = mask / 255.0
 
