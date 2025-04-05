@@ -230,7 +230,6 @@ def predict(resized_image):
   
     model = keras.models.load_model('teethsegmentation_34.hdf5', compile=False)
 
-    def predict(resized_image):
     # Check if the image is grayscale and convert if necessary
     if len(resized_image.shape) == 2:  # Grayscale image (256, 256)
         resized_image = np.expand_dims(resized_image, axis=-1)  # Convert shape to (256, 256, 1)
