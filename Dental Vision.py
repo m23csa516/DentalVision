@@ -269,7 +269,7 @@ def predict(resized_image):
     backtorgb = img1
     # backtorgb = cv2.cvtColor(img1, cv2.COLOR_GRAY2RGB)
     backtorgb[np.where((backtorgb == [255, 255, 255]).all(axis=2))] = [0, 0, 255]  #bgr
-
+    img1 = cv2.cvtColor(img1, cv2.COLOR_RGB2GRAY)
     num_labels, labels_im = cv2.connectedComponents(img1)
  
 
