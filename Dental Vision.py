@@ -241,14 +241,13 @@ def predict(resized_image):
     # resized_image = cv2.resize(image_1, (256, 256))
     mask = image
     # mask = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
-    normalized_image = mask / 255.0
+    #normalized_image = mask / 255.0
+    normalized_image = mask.astype('float32') / 255.0  # Example normalization
 
-    normalized_image = np.expand_dims(normalized_image, axis=-1) 
-    normalized_image = np.expand_dims(normalized_image, axis=0) 
+    # Make the prediction
+    pred_mask = model.predict(np.expand_dims(normalized_image, axis=0))
 
-    normalized_image = normalized_image.astype('float32')
-
-    pred_mask = model.predict(normalized_image)
+  
 
     # Convert the probabilities to a binary mask using a threshold (e.g., 0.5)
     binary_mask = (pred_mask > 0.5).astype(np.uint8)
